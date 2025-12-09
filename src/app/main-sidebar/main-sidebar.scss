@@ -1,0 +1,173 @@
+/* Main container for the Discord-like left sidebar */
+.main-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 76px; /* close to Discord default */
+  padding: 8px 0;
+  box-sizing: border-box;
+
+  /* Use Angular Material design tokens where possible */
+  background-color: var(--mat-sidenav-container-background-color, #202225);
+  color: var(--mat-sidenav-content-text-color, #ffffffde);
+
+  /* Full height so it acts as a primary navigation rail */
+  height: 100%;
+}
+
+/* Generic sidebar item (server bubble, home button, user avatar, etc.) */
+.sidebar-item {
+  position: relative;
+  margin: 4px 0;
+  box-shadow: none;
+  background: #313338;
+  color: #f2f3f5;
+
+  &:hover {
+    background: #5865f2;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #ffffff;
+    outline-offset: 2px;
+  }
+}
+
+/* Home button (Discord logo) */
+.sidebar-item--home {
+  margin-bottom: 8px;
+  background: #5865f2;
+
+  &:hover {
+    background: #4752c4;
+  }
+}
+
+/* Server icons */
+.sidebar-item--server {
+  border-radius: 50%;
+  overflow: hidden;
+
+  &:hover {
+    border-radius: 16px;
+    transition:
+      border-radius 120ms ease-out,
+      background-color 120ms ease-out;
+  }
+}
+
+/* Add server (+) button */
+.sidebar-item--add {
+  margin-top: 8px;
+  background: #3ba55d;
+  color: #ffffff;
+
+  &:hover {
+    background: #2d7d46;
+  }
+}
+
+/* Avatar / server letter or icon */
+.sidebar-item__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 50%;
+  background: #5865f2;
+  color: #ffffff;
+}
+
+/* User avatar at the bottom can be slightly different */
+.sidebar-item__avatar--user {
+  background: #7289da;
+}
+
+/* Notification badge approximation using simple absolutely positioned span */
+.sidebar-item__badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background-color: #f04747;
+  color: #ffffff;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+/* Divider spacing between home button and server list */
+mat-divider {
+  width: 40px;
+  margin: 8px 0;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Sections inside sidebar */
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Push user area to the very bottom */
+.sidebar-spacer {
+  flex: 1 1 auto;
+}
+
+/* User section at the bottom */
+.sidebar-section--user {
+  width: 100%;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Row of mute / settings buttons */
+.sidebar-user-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  button[mat-icon-button] {
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover {
+      color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.08);
+    }
+  }
+}
+
+/* Ensure mini-fab buttons are sized consistently */
+button[mat-mini-fab].sidebar-item {
+  width: 48px;
+  height: 48px;
+}
+
+/* Responsive consideration: shrink slightly on very small heights */
+@media (max-height: 640px) {
+  .main-sidebar {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+
+  button[mat-mini-fab].sidebar-item {
+    width: 44px;
+    height: 44px;
+  }
+}

@@ -1,0 +1,67 @@
+<div class="main-sidebar mat-elevation-z4">
+  <!-- Discord logo / home button -->
+  <button mat-mini-fab color="primary" class="sidebar-item sidebar-item--home" aria-label="Home">
+    <mat-icon>discord</mat-icon>
+  </button>
+
+  <mat-divider></mat-divider>
+
+  <!-- Server list -->
+  <nav class="sidebar-section" aria-label="Servers">
+    <!-- Example server items; in a real app bind these with *ngFor -->
+    <button mat-mini-fab class="sidebar-item sidebar-item--server" aria-label="Server 1">
+      <span class="sidebar-item__avatar">A</span>
+      <span class="sidebar-item__badge mat-badge mat-badge-accent">4</span>
+    </button>
+
+    <button mat-mini-fab class="sidebar-item sidebar-item--server" aria-label="Server 2">
+      <span class="sidebar-item__avatar">B</span>
+      <span class="sidebar-item__badge mat-badge mat-badge-warn">13</span>
+    </button>
+
+    <button mat-mini-fab class="sidebar-item sidebar-item--server" aria-label="Server 3">
+      <span class="sidebar-item__avatar">C</span>
+      <span class="sidebar-item__badge mat-badge">18</span>
+    </button>
+
+    <button mat-mini-fab class="sidebar-item sidebar-item--server" aria-label="Server 4">
+      <span class="sidebar-item__avatar">D</span>
+      <span class="sidebar-item__badge mat-badge mat-badge-accent">5</span>
+    </button>
+
+    <button mat-mini-fab class="sidebar-item sidebar-item--server" aria-label="Server 5">
+      <span class="sidebar-item__avatar">E</span>
+      <span class="sidebar-item__badge mat-badge mat-badge-warn">28</span>
+    </button>
+
+    <!-- Add server button -->
+    <button
+      mat-mini-fab
+      color="accent"
+      class="sidebar-item sidebar-item--add"
+      aria-label="Add server"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </nav>
+
+  <!-- Spacer to push user section to bottom -->
+  <div class="sidebar-spacer"></div>
+
+  <!-- User status / settings -->
+  <section class="sidebar-section sidebar-section--user" aria-label="User">
+    <button mat-mini-fab class="sidebar-item sidebar-item--user" aria-label="Current user">
+      <span class="sidebar-item__avatar sidebar-item__avatar--user">IG</span>
+    </button>
+
+    <div class="sidebar-user-actions">
+      <button mat-icon-button matTooltip="Mute" aria-label="Mute">
+        <mat-icon>volume_off</mat-icon>
+      </button>
+
+      <button mat-icon-button matTooltip="User settings" aria-label="User settings">
+        <mat-icon>settings</mat-icon>
+      </button>
+    </div>
+  </section>
+</div>
