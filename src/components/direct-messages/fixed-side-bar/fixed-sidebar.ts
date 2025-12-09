@@ -272,9 +272,14 @@ interface DirectMessage {
         width: 20px;
       }
 
+      ::ng-deep.dm-sidebar__nav .mat-mdc-button .mdc-button__label {
+        display: flex;
+        align-items: center;
+        width: 100%;
+      }
+
       .dm-sidebar__nav-label {
         flex: 1;
-
         text-align: left;
       }
 

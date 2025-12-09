@@ -175,7 +175,7 @@ import { MatIconModule } from '@angular/material/icon';
         margin: 8px 16px 16px 16px;
         background-color: #313338;
         border-radius: 8px;
-        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 0 1.4px rgba(0, 0, 0, 0.2);
         display: flex;
         flex-direction: column;
         padding: 12px 16px 16px;
