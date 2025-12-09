@@ -1,9 +1,15 @@
+import { Timestamp } from '@angular/fire/firestore';
+
+
+export type MessageType = 'text' | 'image' | 'file';
+
 export interface ChatMessage {
   id?: string;
-  type: 'text' | 'image' | 'file';
+  roomId: string;           // 🔗 relacionamento explícito
+  type: MessageType;
   text?: string;
   senderId: string;
-  createdAt: any; // firestore Timestamp | serverTimestamp()
+  createdAt: Timestamp;     // use o tipo concreto de Firestore
   attachment?: {
     name: string;
     path: string;
@@ -12,8 +18,9 @@ export interface ChatMessage {
     downloadURL: string;
   };
 }
-
 export interface Pagination {
   limit?: number; // default 50
   startAfter?: any | null; // last doc from previous page
 }
+
+

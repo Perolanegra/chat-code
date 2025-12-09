@@ -1,3 +1,4 @@
+
 import { inject, Injectable } from '@angular/core';
 import {
   Firestore,
@@ -15,23 +16,23 @@ import {
   serverTimestamp,
   Timestamp,
   QueryDocumentSnapshot,
+  QueryConstraint,
   doc,
+  collectionData,
 } from '@angular/fire/firestore';
-import { Storage, ref, uploadBytesResumable, getDownloadURL } from '@angular/fire/storage';
-import { Observable, from, throwError } from 'rxjs';
+import { Observable, from, throwError, firstValueFrom } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import {
   ChatMessage,
   Pagination,
 } from '../../modules/chat/interfaces/chat-message/chat-message.interface';
-import { IFirestoreService } from '../../modules/chat/interfaces/firestore/firestore.interface';
 
 export interface SendMessageOptions {
   type?: ChatMessage['type'];
   text?: string;
   senderId: string;
-  // optional attachment file
+  // sem Storage, ignoramos file aqui; use sendExternalAttachment() se precisar
   file?: File | null;
 }
 
@@ -40,44 +41,38 @@ export interface PaginatedMessages {
   lastDoc: QueryDocumentSnapshot<DocumentData> | null;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
-export class FirestoreService extends IFirestoreService {
+@Injectable({ providedIn: 'root' })
+export class FirestoreService {
   private readonly firestore = inject(Firestore);
-  private readonly storage = inject(Storage);
 
   /**
-   * Reference to the messages subcollection of a given chat.
-   *
-   * Structure:
-   *   chats/{chatId}/messages/{messageId}
+   * Referência da subcoleção de mensagens de uma room.
+   * Estrutura: rooms/{roomId}/messages/{messageId}
    */
-  private messagesCol(chatId: string): CollectionReference<DocumentData> {
-    return collection(this.firestore, `chats/${chatId}/messages`);
+  private messagesCol(roomId: string): CollectionReference<DocumentData> {
+    return collection(this.firestore, `rooms/${roomId}/messages`);
   }
 
   // ---------------------------------------------------------------------------
-  // Messages: list / paginate
+  // Messages: list / paginate (one-shot)
   // ---------------------------------------------------------------------------
 
   /**
-   * Load a page of messages for a given chat.
+   * Carrega uma página de mensagens de uma room.
+   * - Ordena por createdAt (desc) para histórico decrescente.
+   * - Usa limit + startAfter para paginação.
    *
-   * - Ordered by createdAt (desc) for efficient querying.
-   * - Uses limit + startAfter for pagination.
-   *
-   * Use the returned `lastDoc` as `pagination.startAfter` for the next page.
+   * Use o `lastDoc` retornado como `pagination.startAfter` na próxima página.
    */
-  listMessages(chatId: string, pagination: Pagination = {}): Observable<PaginatedMessages> {
+  listMessages(
+    roomId: string,
+    pagination: Pagination = {},
+  ): Observable<PaginatedMessages> {
     const { limit: pageSize = 50, startAfter } = pagination;
 
-    const colRef = this.messagesCol(chatId);
-
-    const constraints: any[] = [orderBy('createdAt', 'desc'), fsLimit(pageSize)];
-    if (startAfter) {
-      constraints.push(fsStartAfter(startAfter));
-    }
+    const colRef = this.messagesCol(roomId);
+    const constraints: QueryConstraint[] = [orderBy('createdAt', 'desc'), fsLimit(pageSize)];
+    if (startAfter) constraints.push(fsStartAfter(startAfter));
 
     const q = query(colRef, ...constraints);
 
@@ -85,14 +80,10 @@ export class FirestoreService extends IFirestoreService {
       map((snap) => {
         const messages: ChatMessage[] = snap.docs.map((d) => {
           const data = d.data() as ChatMessage;
-          return {
-            ...data,
-            id: d.id,
-          };
+          const normalized = this.normalizeCreatedAt({ ...data, id: d.id });
+          return normalized;
         });
-
         const lastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : null;
-
         return { messages, lastDoc };
       }),
       catchError((error) => {
@@ -102,141 +93,141 @@ export class FirestoreService extends IFirestoreService {
     );
   }
 
+  /**
+   * Carrega próxima página (Promise), útil para "carregar mais" histórico.
+   */
+  async loadNextPage(
+    roomId: string,
+    lastDocSnap: QueryDocumentSnapshot<DocumentData>,
+    page: Pagination = { limit: 50 },
+  ): Promise<ChatMessage[]> {
+    const colRef = this.messagesCol(roomId);
+    const q = query(
+      colRef,
+      orderBy('createdAt', 'desc'),
+      fsStartAfter(lastDocSnap),
+      fsLimit(page.limit ?? 50),
+    );
+    const obs = collectionData(q, { idField: 'id' }) as Observable<ChatMessage[]>;
+    const data = await firstValueFrom(obs);
+    return data.map((m) => this.normalizeCreatedAt(m));
+  }
+
   // ---------------------------------------------------------------------------
-  // Messages: send (text + attachment)
+  // Messages: real-time stream (timeline)
   // ---------------------------------------------------------------------------
 
   /**
-   * Send a message.
-   *
-   * - If `file` is provided, uploads it to Storage and stores metadata in
-   *   ChatMessage.attachment (URL, type, size, etc.).
-   * - Uses serverTimestamp() for createdAt to support offline mode and
-   *   proper server-time ordering.
-   *
-   * UI can create an optimistic local message with a "sending" status and
-   * update based on success/error of this Observable.
+   * Escuta mensagens em tempo real (N últimas), ordenadas por createdAt.
+   * Útil para a timeline ativa do chat.
    */
-  sendMessage(chatId: string, options: SendMessageOptions): Observable<ChatMessage> {
-    const { senderId, text, file } = options;
+  listenLiveMessages(roomId: string, pageSize = 50): Observable<ChatMessage[]> {
+    const colRef = this.messagesCol(roomId);
+    const q = query(colRef, orderBy('createdAt', 'asc'), fsLimit(pageSize));
+    return collectionData(q, { idField: 'id' }).pipe(
+      map((msgs) => msgs.map((m) => this.normalizeCreatedAt(m as ChatMessage))),
+      catchError((error) => {
+        console.error('[FirestoreService] listenLiveMessages error', error);
+        return throwError(() => error);
+      }),
+    ) as Observable<ChatMessage[]>;
+  }
 
-    if (!senderId) {
-      return throwError(() => new Error('senderId is required'));
-    }
+  // ---------------------------------------------------------------------------
+  // Messages: send (texto) + (opcional) anexo externo
+  // ---------------------------------------------------------------------------
 
-    const type: ChatMessage['type'] =
-      options.type ?? (file ? this.inferTypeFromFile(file) : 'text');
+  /**
+   * Envia uma mensagem de texto.
+   * Usa `serverTimestamp()` para `createdAt` (ordenação por tempo do servidor).
+   */
+  sendMessage(roomId: string, options: SendMessageOptions): Observable<ChatMessage> {
+    const { senderId, text } = options;
+    if (!senderId) return throwError(() => new Error('senderId is required'));
 
+    const type: ChatMessage['type'] = options.type ?? 'text';
     const baseMessage: Partial<ChatMessage> = {
       type,
       text,
       senderId,
-      createdAt: serverTimestamp(),
+      createdAt: serverTimestamp() as unknown as Timestamp,
     };
 
-    // No attachment: send simple text/file reference message.
-    if (!file) {
-      return from(addDoc(this.messagesCol(chatId), baseMessage as ChatMessage)).pipe(
-        map((ref) => ({
-          ...(baseMessage as ChatMessage),
-          id: ref.id,
-        })),
-        catchError((error) => {
-          console.error('[FirestoreService] sendMessage (no file) error', error);
-          return throwError(() => error);
-        }),
-      );
-    }
-
-    // With attachment: upload to Storage first, then create Firestore doc.
-    const storagePath = this.buildAttachmentPath(chatId, senderId, file);
-    const storageRef = ref(this.storage, storagePath);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    return new Observable<ChatMessage>((observer) => {
-      uploadTask.on(
-        'state_changed',
-        // progress callback (can be exposed in future if needed)
-        () => {},
-        (error) => {
-          console.error('[FirestoreService] upload error', error);
-          observer.error(error);
-        },
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-
-            const messagePayload: ChatMessage = {
-              ...(baseMessage as ChatMessage),
-              attachment: {
-                name: file.name,
-                path: storagePath,
-                contentType: file.type,
-                size: file.size,
-                downloadURL,
-              },
-            };
-
-            const refDoc = await addDoc(this.messagesCol(chatId), messagePayload);
-
-            observer.next({
-              ...messagePayload,
-              id: refDoc.id,
-            });
-            observer.complete();
-          } catch (err) {
-            console.error('[FirestoreService] sendMessage (with attachment) error', err);
-            observer.error(err);
-          }
-        },
-      );
-    });
-  }
-
-  // ---------------------------------------------------------------------------
-  // Messages: edit / delete
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Edit an existing message's text and/or type.
-   * Does not modify attachment by design (can be extended later).
-   */
-  editMessage(
-    chatId: string,
-    messageId: string,
-    updates: Partial<Pick<ChatMessage, 'text' | 'type'>>,
-  ): Observable<void> {
-    const messageRef = doc(this.firestore, `chats/${chatId}/messages/${messageId}`);
-
-    const safeUpdates: { [key: string]: any } = {};
-    if (typeof updates.text === 'string') {
-      safeUpdates['text'] = updates.text;
-    }
-
-    if (updates.type) {
-      safeUpdates['type'] = updates.type;
-    }
-
-    if (!Object.keys(safeUpdates).length) {
-      return throwError(() => new Error('No editable fields provided'));
-    }
-
-    return from(updateDoc(messageRef, safeUpdates as { [x: string]: any })).pipe(
+    return from(addDoc(this.messagesCol(roomId), baseMessage as ChatMessage)).pipe(
+      map((ref) => this.normalizeCreatedAt({ ...(baseMessage as ChatMessage), id: ref.id })),
       catchError((error) => {
-        console.error('[FirestoreService] editMessage error', error);
+        console.error('[FirestoreService] sendMessage (text) error', error);
         return throwError(() => error);
       }),
     );
   }
 
   /**
-   * Delete a message.
-   * (Note: does not delete the attachment file from Storage; that can be added
-   * as a follow-up if required.)
+   * (Opcional) Envia uma mensagem com anexo externo (URL pública de outro provedor).
+   * Mantém o mesmo formato de `attachment` sem usar Firebase Storage.
    */
-  deleteMessage(chatId: string, messageId: string): Observable<void> {
-    const messageRef = doc(this.firestore, `chats/${chatId}/messages/${messageId}`);
+  sendExternalAttachment(
+    roomId: string,
+    senderId: string,
+    meta: { name: string; contentType: string; size: number; downloadURL: string },
+    type: 'image' | 'file' = 'file',
+  ): Observable<ChatMessage> {
+    if (!senderId) return throwError(() => new Error('senderId is required'));
 
+    const payload: ChatMessage = {
+      type,
+      senderId,
+      createdAt: serverTimestamp() as unknown as Timestamp,
+      attachment: {
+        name: meta.name,
+        path: 'external', // marcador (não há Storage Firebase)
+        contentType: meta.contentType,
+        size: meta.size,
+        downloadURL: meta.downloadURL,
+      },
+    } as ChatMessage;
+
+    return from(addDoc(this.messagesCol(roomId), payload)).pipe(
+      map((ref) => this.normalizeCreatedAt({ ...payload, id: ref.id })),
+      catchError((error) => {
+        console.error('[FirestoreService] sendExternalAttachment error', error);
+        return throwError(() => error);
+      }),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Messages: edit / delete
+  // ---------------------------------------------------------------------------
+
+  /** Edita texto/tipo de uma mensagem (não altera anexo). */
+  editMessage(
+    roomId: string,
+    messageId: string,
+    updates: Partial<Pick<ChatMessage, 'text' | 'type'>>,
+  ): Observable<void> {
+    const messageRef = doc(this.firestore, `rooms/${roomId}/messages/${messageId}`);
+
+    const safeUpdates: { [key: string]: any } = {};
+    if (typeof updates.text === 'string') safeUpdates['text'] = updates.text;
+    if (updates.type) safeUpdates['type'] = updates.type;
+
+    if (!Object.keys(safeUpdates).length) {
+      return throwError(() => new Error('No editable fields provided'));
+    }
+
+    return from(updateDoc(messageRef, safeUpdates)).pipe(
+      catchError((error) => {
+        console.error('[FirestoreService] editMessage error', error);
+        return throwError(() => error);
+      }),
+    );
+    // Nota: regras do Firestore devem validar autoria/campos.
+  }
+
+  /** Apaga a mensagem. */
+  deleteMessage(roomId: string, messageId: string): Observable<void> {
+    const messageRef = doc(this.firestore, `rooms/${roomId}/messages/${messageId}`);
     return from(deleteDoc(messageRef)).pipe(
       catchError((error) => {
         console.error('[FirestoreService] deleteMessage error', error);
@@ -249,60 +240,29 @@ export class FirestoreService extends IFirestoreService {
   // Helpers
   // ---------------------------------------------------------------------------
 
-  /**
-   * Build a deterministic storage path for attachments.
-   * Example:
-   *   chats/{chatId}/{senderId}/{timestamp}-{rand}.{ext}
-   */
-  private buildAttachmentPath(chatId: string, senderId: string, file: File): string {
-    const ext = file.name.includes('.') ? file.name.split('.').pop() : 'bin';
-    const timestamp = Date.now();
-    const random = Math.random().toString(36).substring(2, 10);
-    return `chats/${chatId}/${senderId}/${timestamp}-${random}.${ext}`;
-  }
-
-  /**
-   * Guess ChatMessage.type from the File's contentType.
-   */
-  private inferTypeFromFile(file: File | null | undefined): ChatMessage['type'] {
-    if (!file) {
-      return 'file';
-    }
-    if (file.type && file.type.startsWith('image/')) {
-      return 'image';
-    }
+  /** Infere ChatMessage.type a partir de contentType de um arquivo (caso use externo). */
+  private inferTypeFromFile(file?: File | null): ChatMessage['type'] {
+    if (!file) return 'file';
+    if (file.type && file.type.startsWith('image/')) return 'image';
     return 'file';
   }
 
   /**
-   * Sometimes createdAt might not be a Firestore Timestamp (e.g., offline cache,
-   * or a Date/millis). This helper allows callers to normalize it if needed.
+   * Normaliza `createdAt` em Timestamp, para evitar edge cases
+   * (cache offline, Date/millis).
    */
   normalizeCreatedAt(message: ChatMessage): ChatMessage {
     const createdAt = message.createdAt;
 
-    if (createdAt instanceof Timestamp) {
-      return message;
-    }
+    if (createdAt instanceof Timestamp) return message;
+    if (createdAt && typeof (createdAt as any).toDate === 'function') return message;
 
-    if (createdAt && typeof (createdAt as any).toDate === 'function') {
-      return message;
+    if ((createdAt as unknown) instanceof Date) {
+      return { ...message, createdAt: Timestamp.fromDate(createdAt) };
     }
-
-    if (createdAt instanceof Date) {
-      return {
-        ...message,
-        createdAt: Timestamp.fromDate(createdAt),
-      };
-    }
-
     if (typeof createdAt === 'number') {
-      return {
-        ...message,
-        createdAt: Timestamp.fromMillis(createdAt),
-      };
+      return { ...message, createdAt: Timestamp.fromMillis(createdAt) };
     }
-
     return message;
   }
 }
