@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-friends-page',
   standalone: true,
+  imports: [MatIconModule],
   template: `
     <section class="friends">
       <!-- Top header card (Friends, filters, Add Friend) -->
       <header class="friends__header-card">
         <div class="friends__header-left">
-          <span class="friends__header-icon">👥</span>
+          <mat-icon>emoji_people</mat-icon>
           <h1 class="friends__header-title">Friends</h1>
         </div>
 
@@ -82,7 +84,7 @@ import { Component } from '@angular/core';
         border-radius: 8px;
         background-color: #313338;
         box-shadow: 0 0 0 1.4px rgba(0, 0, 0, 0.2);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+        border-bottom: 0.3px solid rgba(0, 0, 0, 0.2);
         z-index: 1;
       }
 
@@ -109,9 +111,9 @@ import { Component } from '@angular/core';
       }
 
       .friends__chip {
-        border-radius: 999px;
+        border-radius: 3px;
         border: none;
-        padding: 4px 12px;
+        padding: 6px 12px;
         font-size: 13px;
         color: #b5bac1;
         background-color: #2b2d31;
@@ -119,6 +121,31 @@ import { Component } from '@angular/core';
         transition:
           background-color 120ms ease-out,
           color 120ms ease-out;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .friends__chip::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.35); /* ESCURECENDO */
+        transform: translate(-50%, -50%);
+        opacity: 0;
+        transition:
+          width 250ms ease-out,
+          height 250ms ease-out,
+          opacity 250ms ease-out;
+      }
+
+      .friends__chip:active::after {
+        width: 200px;
+        height: 200px;
+        opacity: 1;
       }
 
       .friends__chip--active {

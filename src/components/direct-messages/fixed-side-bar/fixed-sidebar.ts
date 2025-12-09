@@ -159,27 +159,67 @@ interface DirectMessage {
       }
 
       /* Search bar */
+
       .dm-sidebar__search {
         padding: 8px 12px 4px;
+
+        background-color: #2b2d31;
       }
 
       .dm-sidebar__search-button {
         width: 100%;
-        justify-content: flex-start;
-        border-radius: 6px;
-        text-transform: none;
-        border-color: rgba(0, 0, 0, 0.65);
+        justify-content: center;
+        /* pill-like shape */
+        border-radius: 999px;
+        /* remove default stroked look */
+        border-width: 0;
+        border-color: transparent;
+        box-shadow: none;
+        /* inner “bar” look similar to Discord */
         background-color: #1e1f22;
-        color: #b5bac1;
+        color: #cfd0d1 !important;
+        text-transform: none;
+        font-size: 13px;
+        padding: 6px 12px;
+        transform: scale(0.93);
+        transition:
+          background 0.25s ease,
+          color 0.25s ease,
+          box-shadow 0.25s ease,
+          border-color 0.25s ease,
+          transform 0.25s ease;
+      }
+
+      @keyframes pulse-shadow {
+        0% {
+          box-shadow: 0 0 0px 0 rgba(255, 55, 0, 0.45);
+        }
+        50% {
+          box-shadow: 0 0 18px 6px rgba(255, 55, 0, 0.75);
+        }
+        100% {
+          box-shadow: 0 0 0px 0 rgba(255, 55, 0, 0.45);
+        }
       }
 
       .dm-sidebar__search-button:hover {
-        background-color: #222428;
+        /*background-color: #676c75;*/
+        background: #2b2d31; /* clareia levemente */
+        color: #fff;
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.05);
+        transform: scale(1.02);
+      }
+
+      .dm-sidebar__search-button:active {
+        transform: scale(0.99);
+        background: #1b1c1f;
       }
 
       .dm-sidebar__search-icon {
-        margin-right: 8px;
-        font-size: 18px;
+        margin-right: 6px;
+        font-size: 16px;
+        opacity: 0.85;
       }
 
       .dm-sidebar__search-label {
@@ -260,12 +300,12 @@ interface DirectMessage {
       }
 
       .dm-sidebar__divider {
-        margin: 8px 0 4px;
-        border-color: rgba(0, 0, 0, 0.6);
+        margin: 8px 10px 4px;
+        opacity: 0.19;
       }
 
       .dm-sidebar__divider--spaced {
-        margin: 6px 0;
+        margin: 8px 10px 4px;
       }
 
       /* Sections */
@@ -285,7 +325,7 @@ interface DirectMessage {
         align-items: center;
         justify-content: space-between;
         gap: 4px;
-        padding: 4px 4px 6px;
+        padding: 4px 4px 4px;
       }
 
       .dm-sidebar__section-header--compact {
@@ -308,8 +348,6 @@ interface DirectMessage {
       }
 
       .dm-sidebar__icon-button {
-        width: 28px;
-        height: 28px;
         color: #b5bac1;
       }
 
@@ -323,6 +361,7 @@ interface DirectMessage {
         flex-wrap: nowrap;
         gap: 6px;
         padding: 0 4px 6px;
+        justify-content: space-evenly;
       }
 
       .dm-sidebar__frequent-avatar {
