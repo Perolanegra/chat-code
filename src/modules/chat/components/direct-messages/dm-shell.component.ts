@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FixedSidebarComponent } from './fixed-side-bar/fixed-sidebar';
+import { FixedSidebarComponent } from './fixed-side-bar/fixed-sidebar.component';
 
 @Component({
   selector: 'app-dm-shell',
