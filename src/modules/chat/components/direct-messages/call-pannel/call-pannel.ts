@@ -1,7 +1,7 @@
 
 import { Component, inject } from '@angular/core';
-import { WebRTCService } from '../../services/core/webRTC.service';
-import { WebRTCConfig, WEBRTC_CONFIG } from '../../services/core/webRTC.tokens';
+import { WebRTCService } from '../../../../../services/core/webRTC.service';
+import { WebRTCConfig, WEBRTC_CONFIG } from '../../../../../services/core/webRTC.tokens';
 @Component({
   selector: 'app-call-panel',
   standalone: true,

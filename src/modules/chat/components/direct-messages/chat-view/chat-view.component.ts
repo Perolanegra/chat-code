@@ -1,13 +1,13 @@
 import { NgForOf } from '@angular/common';
 import { Component, inject, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { FirestoreService } from '../../../../services/core/firestore.service';
-import { ChatMessage } from '../../interfaces/chat-message/chat-message.interface';
+import { FirestoreService } from '../../../../../services/core/firestore.service';
+import { ChatMessage } from '../../../interfaces/chat-message/chat-message.interface';
 
 @Component({
   selector: 'app-chat-view',
   imports: [NgForOf],
-  styleUrls: ['./chat-view.component.css'],
+  styleUrls: ['./chat-view.component.scss'],
   template: `
     <!-- Botão para carregar histórico (você pode disparar via scroll topo) -->
     <button (click)="loadMore()" [disabled]="loadingMore">Carregar mais</button>
