@@ -85,47 +85,35 @@ export class RoomSeedService {
     } = dto;
 
     const roomRef = doc(this.db, `rooms/${roomId}`);
-
     const snap = await getDoc(roomRef);
 
     if (!snap.exists()) {
       // Create
-
       await setDoc(roomRef, {
         name,
-
         members,
-
         createdAt: serverTimestamp(),
       });
     } else {
       // Update (merge name/members sem sobrescrever createdAt)
-
       await updateDoc(roomRef, {
         name,
-
         members,
       });
     }
 
     // Seed (opcional) de mensagem de boas-vindas
-
     if (seedWelcomeMessage && welcomeSenderId) {
       const msgCollection = collection(this.db, `rooms/${roomId}/messages`);
-
       await addDoc(msgCollection, {
         type: 'text',
-
         text: `Welcome to ${name}!`,
-
         senderId: welcomeSenderId,
-
         createdAt: serverTimestamp(),
       });
     }
 
     // Seed (opcional) de presença online
-
     if (seedPresenceOnline) {
       const promises = members.map(async (uid) => {
         const presenceRef = doc(this.db, `rooms/${roomId}/presence/${uid}`);
@@ -135,11 +123,11 @@ export class RoomSeedService {
           { merge: true },
         );
       });
+
       await Promise.all(promises);
     }
 
     // (Opcional) limpar sinalização de WebRTC
-
     if (clearWebRTCSignaling) {
       await this.clearWebRTC(roomId);
     }

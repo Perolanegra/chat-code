@@ -1,0 +1,102 @@
+<section class="dm-sidebar" aria-label="Direct messages sidebar">
+  <!-- Top search / input -->
+  <header class="dm-sidebar__search">
+    <button mat-stroked-button color="primary" class="dm-sidebar__search-button" type="button">
+      <mat-icon class="dm-sidebar__search-icon">search</mat-icon>
+      <span class="dm-sidebar__search-label">Find or start a conversation</span>
+    </button>
+  </header>
+
+  <!-- Main navigation -->
+  <nav class="dm-sidebar__nav" aria-label="DM sections">
+    <a
+      *ngFor="let item of navItems()"
+      mat-button
+      class="dm-sidebar__nav-item"
+      [routerLink]="['/dm', item.route]"
+      routerLinkActive="dm-sidebar__nav-item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <mat-icon class="dm-sidebar__nav-icon">{{ item.icon }}</mat-icon>
+      <span class="dm-sidebar__nav-label">{{ item.label }}</span>
+
+      <span *ngIf="item.badge" class="dm-sidebar__badge" [ngSwitch]="item.badge">
+        <span
+          *ngSwitchCase="'free'"
+          class="dm-sidebar__badge-chip dm-sidebar__badge-chip--pill"
+        >
+          2 WEEKS FREE
+        </span>
+        <span *ngSwitchDefault class="dm-sidebar__badge-chip">
+          {{ item.badge }}
+        </span>
+      </span>
+    </a>
+  </nav>
+
+  <mat-divider class="dm-sidebar__divider"></mat-divider>
+
+  <!-- Frequent friends avatars -->
+  <section class="dm-sidebar__section" aria-label="Frequent friends">
+    <header class="dm-sidebar__section-header">
+      <span class="dm-sidebar__section-title"> Frequent Friends </span>
+      <mat-icon class="dm-sidebar__section-icon" aria-hidden="true">help_outline</mat-icon>
+    </header>
+
+    <div class="dm-sidebar__frequent-row">
+      <button
+        *ngFor="let friend of frequentFriends()"
+        mat-mini-fab
+        class="dm-sidebar__frequent-avatar"
+        type="button"
+        [ngStyle]="{ 'background-color': friend.color }"
+      >
+        <span class="dm-sidebar__frequent-initials">
+          {{ friend.initials }}
+        </span>
+      </button>
+    </div>
+  </section>
+
+  <mat-divider class="dm-sidebar__divider dm-sidebar__divider--spaced"></mat-divider>
+
+  <!-- Direct messages list -->
+  <section class="dm-sidebar__section dm-sidebar__section--grow" aria-label="Direct messages">
+    <header class="dm-sidebar__section-header dm-sidebar__section-header--compact">
+      <span class="dm-sidebar__section-title">Direct Messages</span>
+      <button
+        mat-icon-button
+        class="dm-sidebar__icon-button"
+        type="button"
+        aria-label="New DM (placeholder)"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    </header>
+
+    <div id="sidebar_list" class="dm-sidebar__dm-list" role="list">
+      <button
+        *ngFor="let dm of directMessages()"
+        mat-button
+        type="button"
+        class="dm-sidebar__dm-item"
+        role="listitem"
+        (click)="setChannelRoom(dm.id)"
+      >
+        <span class="dm-sidebar__dm-avatar" [ngStyle]="{ 'background-color': dm.color }">
+          <span class="dm-sidebar__dm-initials">{{ dm.initials }}</span>
+          <span
+            *ngIf="dm.status"
+            class="dm-sidebar__dm-status"
+            [ngClass]="'dm-sidebar__dm-status--' + dm.status"
+            aria-hidden="true"
+          ></span>
+        </span>
+
+        <span class="dm-sidebar__dm-name">
+          {{ dm.name }}
+        </span>
+      </button>
+    </div>
+  </section>
+</section>

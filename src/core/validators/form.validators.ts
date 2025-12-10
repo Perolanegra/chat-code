@@ -377,9 +377,7 @@ export function getFormModelMeta(ctor: Function): Readonly<ClassMeta> | undefine
 export function buildFormGroupFromClass<T>(ctor: new () => T, initial?: Partial<T>): FormGroup {
   const meta = META.get(ctor);
   if (!meta) {
-    throw new Error(
-      `[form.validators.ts] Nenhuma propriedade decorada encontrada para ${ctor.name}.`,
-    );
+    throw new Error(`[form.validators.ts] None Decorated property found for ${ctor.name}.`);
   }
 
   const controls: Record<string, FormControl> = {};
@@ -438,12 +436,12 @@ export type ErrorMessages = Record<string, string | ErrorMessageFn>;
 
 /** Mensagens padrão (pt-BR) para chaves de erro comuns */
 export const DEFAULT_ERROR_MESSAGES: ErrorMessages = {
-  required: (_e, ctx) => `${ctx.label ?? 'Campo'} é obrigatório.`,
-  requiredTrue: () => `É obrigatório marcar este campo.`,
+  required: (_e, ctx) => `${ctx.label ?? 'Campo'} required.`,
+  requiredTrue: () => `It is required to mark this field.`,
   minlength: (e, ctx) =>
-    `${ctx.label ?? 'Campo'} precisa ter pelo menos ${e.requiredLength} caracteres (atual: ${e.actualLength}).`,
+    `${ctx.label ?? 'Campo'} needs to be having at least ${e.requiredLength} characters (actual: ${e.actualLength}).`,
   maxlength: (e, ctx) =>
-    `${ctx.label ?? 'Campo'} pode ter no máximo ${e.requiredLength} caracteres (atual: ${e.actualLength}).`,
+    `${ctx.label ?? 'Campo'} needs to be having at most ${e.requiredLength} characters (actual: ${e.actualLength}).`,
   email: () => `E-mail inválido.`,
   pattern: () => `Formato inválido.`,
   min: (e, ctx) => `${ctx.label ?? 'Valor'} mínimo é ${e.min}.`,

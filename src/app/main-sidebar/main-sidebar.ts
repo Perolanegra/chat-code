@@ -11,4 +11,4 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: './main-sidebar.html',
   styleUrl: './main-sidebar.scss',
 })
-export class MainSidebar {}
+export class MainSidebarComponent {}

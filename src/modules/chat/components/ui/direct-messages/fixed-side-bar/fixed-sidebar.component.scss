@@ -1,0 +1,352 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.dm-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #2b2d31;
+  color: #f2f3f5;
+  box-sizing: border-box;
+}
+
+/* Search bar */
+
+.dm-sidebar__search {
+  padding: 8px 12px 4px;
+
+  background-color: #2b2d31;
+}
+
+.dm-sidebar__search-button {
+  width: 100%;
+  justify-content: center;
+  /* pill-like shape */
+  border-radius: 999px;
+  /* remove default stroked look */
+  border-width: 0;
+  border-color: transparent;
+  box-shadow: none;
+  /* inner “bar” look similar to Discord */
+  background-color: #1e1f22;
+  color: #cfd0d1 !important;
+  text-transform: none;
+  font-size: 13px;
+  padding: 6px 12px;
+  transform: scale(0.93);
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+@keyframes pulse-shadow {
+  0% {
+    box-shadow: 0 0 0px 0 rgba(255, 55, 0, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 18px 6px rgba(255, 55, 0, 0.75);
+  }
+  100% {
+    box-shadow: 0 0 0px 0 rgba(255, 55, 0, 0.45);
+  }
+}
+
+.dm-sidebar__search-button:hover {
+  /*background-color: #676c75;*/
+  background: #2b2d31; /* clareia levemente */
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.05);
+  transform: scale(1.02);
+}
+
+.dm-sidebar__search-button:active {
+  transform: scale(0.99);
+  background: #1b1c1f;
+}
+
+.dm-sidebar__search-icon {
+  margin-right: 6px;
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+.dm-sidebar__search-label {
+  font-size: 13px;
+}
+
+/* Nav items */
+.dm-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 8px 0;
+  gap: 4px;
+}
+
+.dm-sidebar__nav-item {
+  position: relative;
+  justify-content: flex-start;
+
+  border-radius: 8px;
+  padding: 8px 10px;
+
+  text-transform: none;
+
+  color: #b5bac1;
+
+  font-size: 14px;
+
+  gap: 10px;
+
+  background-color: transparent;
+}
+
+.dm-sidebar__nav-item:hover {
+  background-color: #35373c;
+
+  color: #dbdee1;
+}
+
+.dm-sidebar__nav-item--active {
+  background-color: #404249;
+
+  color: #ffffff;
+
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.65);
+}
+
+.dm-sidebar__nav-icon {
+  font-size: 20px;
+
+  width: 20px;
+}
+
+::ng-deep.dm-sidebar__nav .mat-mdc-button .mdc-button__label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.dm-sidebar__nav-label {
+  flex: 1;
+  text-align: left;
+}
+
+.dm-sidebar__badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.dm-sidebar__badge-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  min-height: 18px;
+  border-radius: 10px;
+  font-size: 11px;
+  background-color: #f04747;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.dm-sidebar__badge-chip--pill {
+  background-color: #3ba55d;
+}
+
+.dm-sidebar__divider {
+  margin: 8px 10px 4px;
+  opacity: 0.19;
+}
+
+.dm-sidebar__divider--spaced {
+  margin: 8px 10px 4px;
+}
+
+/* Sections */
+.dm-sidebar__section {
+  padding: 0 8px;
+}
+
+.dm-sidebar__section--grow {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.dm-sidebar__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 4px 4px;
+}
+
+.dm-sidebar__section-header--compact {
+  padding-top: 2px;
+}
+
+.dm-sidebar__section-title {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #949ba4;
+}
+
+.dm-sidebar__section-icon {
+  font-size: 14px;
+  height: 14px;
+  width: 14px;
+  color: #6d727b;
+}
+
+.dm-sidebar__icon-button {
+  color: #b5bac1;
+}
+
+.dm-sidebar__icon-button:hover {
+  color: #ffffff;
+}
+
+/* Frequent friends */
+.dm-sidebar__frequent-row {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 0 4px 6px;
+  justify-content: space-evenly;
+}
+
+.dm-sidebar__frequent-avatar {
+  position: relative;
+  width: 32px;
+
+  height: 32px;
+
+  border-radius: 50%;
+  padding: 0;
+  box-shadow: 0 0 0 2px #2b2d31;
+
+  overflow: hidden;
+}
+
+.dm-sidebar__frequent-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+
+  font-weight: 600;
+
+  color: #ffffff;
+}
+
+/* Direct messages list */
+.dm-sidebar__dm-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 5px 0 8px;
+  overflow-y: auto;
+  gap: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dm-sidebar__nav .mat-mdc-button .mdc-button__label {
+  gap: 9px;
+  display: flex;
+  align-items: center;
+}
+
+.dm-sidebar__dm-item {
+  width: 100%;
+  justify-content: flex-start;
+  border-radius: 6px;
+  padding: 23px 6px;
+  margin-bottom: 2px;
+  text-transform: none;
+  font-size: 14px;
+  gap: 8px;
+  color: #dbdee1;
+}
+
+.dm-sidebar__dm-item:hover {
+  background-color: #35373c;
+}
+
+.dm-sidebar__dm-avatar {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* allow status dot to overflow avatar bounds slightly, like Discord */
+  overflow: visible;
+  box-shadow: 0 0 0 2px #2b2d31;
+}
+
+span.mdc-button__label {
+  gap: 9px;
+  display: flex;
+  align-items: center;
+}
+
+.dm-sidebar__dm-initials {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.dm-sidebar__dm-status {
+  position: absolute;
+  /* move dot slightly inside so it is no longer cut off */
+  bottom: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 3px solid #2b2d31;
+  background-color: #3ba55d;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.dm-sidebar__dm-status--idle {
+  background-color: #faa81a;
+}
+
+.dm-sidebar__dm-status--dnd {
+  background-color: #f04747;
+}
+
+.dm-sidebar__dm-status--offline {
+  background-color: #4f545c;
+}
+
+.dm-sidebar__dm-name {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 6px;
+}
+
+/* Scrollbar */
+.dm-sidebar__dm-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dm-sidebar__dm-list::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 3px;
+}

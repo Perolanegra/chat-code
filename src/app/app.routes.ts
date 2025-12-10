@@ -19,11 +19,6 @@ export const routes: Routes = [
       import('@modules-discover-ui/root/discover.routes').then((m) => m.DISCOVER_ROUTES),
   },
   {
-    path: 'message-channel',
-    loadChildren: () =>
-      import('@modules-chat-ui/channel/channel.routes').then((m) => m.CHANNEL_ROUTES),
-  },
-  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'direct-messages',
