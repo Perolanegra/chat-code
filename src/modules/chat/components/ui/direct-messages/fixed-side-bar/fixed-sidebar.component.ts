@@ -87,7 +87,8 @@ export class FixedSidebarComponent {
   ]);
 
   setChannelRoom(calleeId: number) {
-    //TODO: Implement setChannelRoom method
+    //TODO: Implement setChannelRoom state
+    // we need first to call
     // this.router.navigate(['/chat', calleeId]);
   }
 }

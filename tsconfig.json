@@ -17,12 +17,14 @@
     "baseUrl": "./",
     "paths": {
       "@core/app/*": ["src/core/*"],
+      "@modules-auth/*": ["src/modules/auth/*"],
       "@modules-chat-ui/*": ["src/modules/chat/components/ui/*"],
       "@modules-chat-domain/*": ["src/modules/chat/components/domain/index.ts"],
       "@modules-chat-interfaces/*": ["src/modules/chat/interfaces/*"],
       "@modules-chat-guards/*": ["src/modules/chat/guards/*"],
       "@modules-server-ui/*": ["src/modules/server/components/ui/*"],
-      "@modules-discover-ui/*": ["src/modules/discover/components/ui/*"]
+      "@modules-discover-ui/*": ["src/modules/discover/components/ui/*"],
+      "@services/*": ["src/services/*"]
     }
   },
   "angularCompilerOptions": {

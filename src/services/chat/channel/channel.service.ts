@@ -17,7 +17,7 @@ import { Observable, of } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class ChannelsService {
+export class ChannelService {
   /**
    * Returns the default room id for the message-channel route.
    *

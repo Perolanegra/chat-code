@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { AuthLoginComponent } from 'src/modules/auth/components/ui/login/login.component';
 
 export const routes: Routes = [
   {
@@ -7,6 +8,10 @@ export const routes: Routes = [
       import('@modules-chat-ui/direct-messages/direct-messages.routes').then(
         (m) => m.DIRECT_MESSAGES_ROUTES,
       ),
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('@modules-auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'server',
@@ -21,10 +26,10 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'direct-messages',
+    redirectTo: 'auth',
   },
   {
     path: '**',
-    redirectTo: 'direct-messages',
+    redirectTo: 'auth',
   },
 ];
