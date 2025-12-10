@@ -6,7 +6,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
-import { WEBRTC_CONFIG } from '../services/core/webRTC.tokens';
+import { WEBRTC_CONFIG } from '../core/webrtc.tokens';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -37,19 +37,19 @@ export const appConfig: ApplicationConfig = {
           {
             urls: [
               // Xirsys normalmente fornece múltiplos endpoints, inclua os que o painel/endpoint retornar
-              "turn:sp-turn1.xirsys.com:80?transport=udp",
-              "turn:sp-turn1.xirsys.com:3478?transport=udp",
-              "turn:sp-turn1.xirsys.com:80?transport=tcp",
-              "turn:sp-turn1.xirsys.com:3478?transport=tcp",
-              "turns:sp-turn1.xirsys.com:443?transport=tcp",
-              "turns:sp-turn1.xirsys.com:5349?transport=tcp"
+              'turn:sp-turn1.xirsys.com:80?transport=udp',
+              'turn:sp-turn1.xirsys.com:3478?transport=udp',
+              'turn:sp-turn1.xirsys.com:80?transport=tcp',
+              'turn:sp-turn1.xirsys.com:3478?transport=tcp',
+              'turns:sp-turn1.xirsys.com:443?transport=tcp',
+              'turns:sp-turn1.xirsys.com:5349?transport=tcp',
             ],
-            username: '7BUBGdyAb7SDJYcV4wIMKYBWeXlGMA4YYVeKFz5RjS-Vmz86eS5-RCqb9RWNbSqkAAAAAGk4oEdwZXJvbGFuZWdyYQ==',
-            credential: '086e0538-d54d-11f0-9c63-0242ac120002'
-          }
-        ]
-
-      }
+            username:
+              '7BUBGdyAb7SDJYcV4wIMKYBWeXlGMA4YYVeKFz5RjS-Vmz86eS5-RCqb9RWNbSqkAAAAAGk4oEdwZXJvbGFuZWdyYQ==',
+            credential: '086e0538-d54d-11f0-9c63-0242ac120002',
+          },
+        ],
+      },
     },
   ],
 };

@@ -1,4 +1,3 @@
-
 import { inject, Injectable } from '@angular/core';
 import {
   Firestore,
@@ -22,13 +21,6 @@ import {
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
-import {
-  ChatMessage,
-  ChatMessageAttachment,
-  Pagination,
-} from '../../modules/chat/interfaces/chat-message/chat-message.interface';
-import { makeAttachmentMessage, makeTextMessage } from '../../app/factories/firestore/firestore.factory';
-
 export interface SendMessageOptions {
   type?: ChatMessage['type'];
   text?: string;
@@ -36,6 +28,16 @@ export interface SendMessageOptions {
   // sem Storage, ignoramos file aqui; use sendExternalAttachment() se precisar
   file?: File | null;
 }
+
+import {
+  makeAttachmentMessage,
+  makeTextMessage,
+} from '../app/factories/firestore/firestore.factory';
+import {
+  ChatMessage,
+  ChatMessageAttachment,
+  Pagination,
+} from '../modules/chat/interfaces/chat-message/chat-message.interface';
 
 export interface PaginatedMessages {
   messages: ChatMessage[];
@@ -65,10 +67,7 @@ export class FirestoreService {
    *
    * Use o `lastDoc` retornado como `pagination.startAfter` na próxima página.
    */
-  listMessages(
-    roomId: string,
-    pagination: Pagination = {},
-  ): Observable<PaginatedMessages> {
+  listMessages(roomId: string, pagination: Pagination = {}): Observable<PaginatedMessages> {
     const { limit: pageSize = 50, startAfter } = pagination;
 
     const colRef = this.messagesCol(roomId);
@@ -98,7 +97,6 @@ export class FirestoreService {
    * Carrega próxima página (Promise), útil para "carregar mais" histórico.
    */
 
-
   async loadNextPage(
     roomId: string,
     lastDocSnap: QueryDocumentSnapshot<DocumentData>,
@@ -113,7 +111,7 @@ export class FirestoreService {
     );
 
     const snap = await getDocs(q);
-    const messages = snap.docs.map(d => {
+    const messages = snap.docs.map((d) => {
       const data = d.data() as ChatMessage;
       return this.normalizeCreatedAt({ ...data, id: d.id });
     });

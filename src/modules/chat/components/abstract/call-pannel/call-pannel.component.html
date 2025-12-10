@@ -1,0 +1,53 @@
+<section class="call-panel">
+  <header class="call-panel__header">
+    <h3>Voice / Video Call</h3>
+    <span class="call-panel__room" *ngIf="roomId">Room: {{ roomId }}</span>
+  </header>
+
+  <section class="call-panel__videos">
+    <div class="call-panel__video-container">
+      <span class="call-panel__label">You</span>
+      <video
+        #localVideo
+        class="call-panel__video call-panel__video--local"
+        autoplay
+        playsinline
+        muted
+      ></video>
+    </div>
+
+    <div class="call-panel__video-container">
+      <span class="call-panel__label">Remote</span>
+      <video
+        #remoteVideo
+        class="call-panel__video call-panel__video--remote"
+        autoplay
+        playsinline
+      ></video>
+    </div>
+  </section>
+
+  <footer class="call-panel__controls">
+    <button
+      type="button"
+      class="call-panel__btn call-panel__btn--primary"
+      (click)="handleStartCall(localVideo, remoteVideo)"
+      [disabled]="inCall || loading || !roomId"
+    >
+      {{ inCall ? 'In Call' : 'Start Call' }}
+    </button>
+
+    <button
+      type="button"
+      class="call-panel__btn call-panel__btn--danger"
+      (click)="handleEndCall(localVideo, remoteVideo)"
+      [disabled]="!inCall"
+    >
+      End Call
+    </button>
+
+    <span class="call-panel__status" *ngIf="status">
+      {{ status }}
+    </span>
+  </footer>
+</section>

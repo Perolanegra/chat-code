@@ -16,12 +16,16 @@ export const routes: Routes = [
   {
     path: 'discover',
     loadChildren: () =>
-      import('../modules/chat/components/domain/discover/discover.routes').then((m) => m.DISCOVER_ROUTES),
+      import('../modules/chat/components/domain/discover/discover.routes').then(
+        (m) => m.DISCOVER_ROUTES,
+      ),
   },
   {
     path: 'message-channel',
     loadChildren: () =>
-      import('../modules/chat/components/domain/channel/channel.routes').then((m) => m.CHANNEL_ROUTES),
+      import('../modules/chat/components/domain/channel/channel.routes').then(
+        (m) => m.CHANNEL_ROUTES,
+      ),
   },
   {
     path: '',
