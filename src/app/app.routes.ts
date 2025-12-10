@@ -11,12 +11,12 @@ export const routes: Routes = [
   {
     path: 'server',
     loadChildren: () =>
-      import('../modules/chat/components/domain/server/server.routes').then((m) => m.SERVER_ROUTES),
+      import('../modules/server/components/domain/root/server.routes').then((m) => m.SERVER_ROUTES),
   },
   {
     path: 'discover',
     loadChildren: () =>
-      import('../modules/chat/components/domain/discover/discover.routes').then(
+      import('../modules/discover/components/domain/root/discover.routes').then(
         (m) => m.DISCOVER_ROUTES,
       ),
   },
