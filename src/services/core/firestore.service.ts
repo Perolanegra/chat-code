@@ -96,11 +96,13 @@ export class FirestoreService {
   /**
    * Carrega próxima página (Promise), útil para "carregar mais" histórico.
    */
+
+
   async loadNextPage(
     roomId: string,
     lastDocSnap: QueryDocumentSnapshot<DocumentData>,
     page: Pagination = { limit: 50 },
-  ): Promise<ChatMessage[]> {
+  ): Promise<{ messages: ChatMessage[]; lastDoc: QueryDocumentSnapshot<DocumentData> | null }> {
     const colRef = this.messagesCol(roomId);
     const q = query(
       colRef,
@@ -108,9 +110,15 @@ export class FirestoreService {
       fsStartAfter(lastDocSnap),
       fsLimit(page.limit ?? 50),
     );
-    const obs = collectionData(q, { idField: 'id' }) as Observable<ChatMessage[]>;
-    const data = await firstValueFrom(obs);
-    return data.map((m) => this.normalizeCreatedAt(m));
+
+    const snap = await getDocs(q);
+    const messages = snap.docs.map(d => {
+      const data = d.data() as ChatMessage;
+      return this.normalizeCreatedAt({ ...data, id: d.id });
+    });
+    const lastDoc = snap.docs.length > 0 ? snap.docs[snap.docs.length - 1] : null;
+
+    return { messages, lastDoc };
   }
 
   // ---------------------------------------------------------------------------
