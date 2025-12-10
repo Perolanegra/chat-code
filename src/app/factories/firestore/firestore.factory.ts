@@ -2,10 +2,10 @@
 import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
 import { ChatMessage } from '../../../modules/chat/interfaces/chat-message/chat-message.interface';
 
-export function makeTextMessage(roomId: string, senderId: string, text: string): ChatMessage {
+export function makeTextMessage(roomId: string, senderId: string, text: string, type: ChatMessage['type']): ChatMessage {
   return {
     roomId,
-    type: 'text',
+    type,
     text,
     senderId,
     createdAt: serverTimestamp() as unknown as Timestamp, // cast porque serverTimestamp retorna FieldValue

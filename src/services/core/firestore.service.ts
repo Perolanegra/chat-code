@@ -25,8 +25,10 @@ import { catchError, map } from 'rxjs/operators';
 
 import {
   ChatMessage,
+  ChatMessageAttachment,
   Pagination,
 } from '../../modules/chat/interfaces/chat-message/chat-message.interface';
+import { makeAttachmentMessage, makeTextMessage } from '../../app/factories/firestore/firestore.factory';
 
 export interface SendMessageOptions {
   type?: ChatMessage['type'];
@@ -154,12 +156,7 @@ export class FirestoreService {
     if (!senderId) return throwError(() => new Error('senderId is required'));
 
     const type: ChatMessage['type'] = options.type ?? 'text';
-    const baseMessage: Partial<ChatMessage> = {
-      type,
-      text,
-      senderId,
-      createdAt: serverTimestamp() as unknown as Timestamp,
-    };
+    const baseMessage = makeTextMessage(roomId, senderId, text || '', type);
 
     return from(addDoc(this.messagesCol(roomId), baseMessage as ChatMessage)).pipe(
       map((ref) => this.normalizeCreatedAt({ ...(baseMessage as ChatMessage), id: ref.id })),
@@ -177,23 +174,12 @@ export class FirestoreService {
   sendExternalAttachment(
     roomId: string,
     senderId: string,
-    meta: { name: string; contentType: string; size: number; downloadURL: string },
+    meta: ChatMessageAttachment,
     type: 'image' | 'file' = 'file',
   ): Observable<ChatMessage> {
     if (!senderId) return throwError(() => new Error('senderId is required'));
 
-    const payload: ChatMessage = {
-      type,
-      senderId,
-      createdAt: serverTimestamp() as unknown as Timestamp,
-      attachment: {
-        name: meta.name,
-        path: 'external', // marcador (não há Storage Firebase)
-        contentType: meta.contentType,
-        size: meta.size,
-        downloadURL: meta.downloadURL,
-      },
-    } as ChatMessage;
+    const payload: ChatMessage = makeAttachmentMessage(roomId, senderId, meta, type);
 
     return from(addDoc(this.messagesCol(roomId), payload)).pipe(
       map((ref) => this.normalizeCreatedAt({ ...payload, id: ref.id })),
