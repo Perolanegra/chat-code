@@ -13,14 +13,13 @@ import {
   orderBy,
   limit as fsLimit,
   startAfter as fsStartAfter,
-  serverTimestamp,
   Timestamp,
   QueryDocumentSnapshot,
   QueryConstraint,
   doc,
   collectionData,
 } from '@angular/fire/firestore';
-import { Observable, from, throwError, firstValueFrom } from 'rxjs';
+import { Observable, from, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 
 import {
