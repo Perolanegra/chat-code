@@ -1,6 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, INJECTOR, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainSidebarComponent } from './main-sidebar/main-sidebar';
+import { AuthService } from '@core/app/services/auth/auth.service';
 
 declare global {
   interface Window {
@@ -17,6 +18,8 @@ declare global {
 })
 export class App {
   protected readonly title = signal('chat-code');
+  public readonly auth = inject(AuthService);
+
   async ping() {
     if (window.electronAPI) {
       const res = await window.electronAPI.ping();

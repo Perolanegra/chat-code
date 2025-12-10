@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthFacadeService } from '@services/auth/auth-facade.service';
+import { AuthFacadeService } from '@core/app/services/auth/auth-facade.service';
 
 /**
  * AuthLoginComponent
