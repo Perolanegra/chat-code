@@ -12,13 +12,8 @@ import {
 } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-
-import {
-  FirestoreService,
-  PaginatedMessages,
-  SendMessageOptions,
-} from '../../../../../services/core/firestore.service';
-import { ChatMessage, Pagination } from '../../../interfaces/chat-message/chat-message.interface';
+import { FirestoreService, PaginatedMessages, SendMessageOptions } from '../../../../../../services/core/firestore.service';
+import { ChatMessage, Pagination } from '../../../../interfaces/chat-message/chat-message.interface';
 
 @Component({
   selector: 'app-messages-page',

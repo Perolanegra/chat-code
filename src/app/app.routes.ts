@@ -4,19 +4,24 @@ export const routes: Routes = [
   {
     path: 'direct-messages',
     loadChildren: () =>
-      import('../modules/chat/components/direct-messages/direct-messages.routes').then(
+      import('../modules/chat/components/domain/direct-messages/direct-messages.routes').then(
         (m) => m.DIRECT_MESSAGES_ROUTES,
       ),
   },
   {
     path: 'server',
     loadChildren: () =>
-      import('../modules/chat/components/server/server.routes').then((m) => m.SERVER_ROUTES),
+      import('../modules/chat/components/domain/server/server.routes').then((m) => m.SERVER_ROUTES),
   },
   {
     path: 'discover',
     loadChildren: () =>
-      import('../modules/chat/components/discover/discover.routes').then((m) => m.DISCOVER_ROUTES),
+      import('../modules/chat/components/domain/discover/discover.routes').then((m) => m.DISCOVER_ROUTES),
+  },
+  {
+    path: 'message-channel',
+    loadChildren: () =>
+      import('../modules/chat/components/domain/channel/channel.routes').then((m) => m.CHANNEL_ROUTES),
   },
   {
     path: '',

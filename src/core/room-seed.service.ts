@@ -70,10 +70,10 @@ export class RoomSeedService {
 
     // Seed (opcional) de mensagem de boas-vindas
     if (options.seedWelcomeMessage && welcomeSenderId) {
-      const msgCol = collection(this.db, `rooms/${roomId}/messages`);
-      await addDoc(msgCol, {
+      const msgCollection = collection(this.db, `rooms/${roomId}/messages`);
+      await addDoc(msgCollection, {
         type: 'text',
-        text: `Bem-vindos à sala ${name}!`,
+        text: `Welcome to ${name}!`,
         senderId: welcomeSenderId,
         createdAt: serverTimestamp(),
       });
@@ -95,7 +95,7 @@ export class RoomSeedService {
   }
 
   /**
-   * Adiciona um membro à sala (rooms/{roomId}.members)
+   * Adiciona um membro à um chat type channel (rooms/{roomId}.members)
    */
   async addMember(roomId: string, userId: string): Promise<void> {
     const roomRef = doc(this.db, `rooms/${roomId}`);
