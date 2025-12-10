@@ -1,6 +1,6 @@
-import { Routes } from "@angular/router";
-import { ChannelComponent } from "./channel.component";
-import { RedirectDefaultRoomGuard } from "../../../guards/room.guard";
+import { Routes } from '@angular/router';
+import { ChannelComponent } from './channel.component';
+import { RedirectDefaultRoomGuard } from '@modules-chat-guards/room.guard';
 
 export const CHANNEL_ROUTES: Routes = [
   { path: '', canActivate: [RedirectDefaultRoomGuard] },
@@ -12,5 +12,4 @@ export const CHANNEL_ROUTES: Routes = [
       // { path: 'settings', component: ChannelSettingsComponent },
     ],
   },
-
-]
+];

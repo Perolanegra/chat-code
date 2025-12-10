@@ -16,7 +16,13 @@
     "module": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@core/app/*": ["src/core/*"]
+      "@core/app/*": ["src/core/*"],
+      "@modules-chat-ui/*": ["src/modules/chat/components/ui/*"],
+      "@modules-chat-domain/*": ["src/modules/chat/components/domain/index.ts"],
+      "@modules-chat-interfaces/*": ["src/modules/chat/interfaces/*"],
+      "@modules-chat-guards/*": ["src/modules/chat/guards/*"],
+      "@modules-server-ui/*": ["src/modules/server/components/ui/*"],
+      "@modules-discover-ui/*": ["src/modules/discover/components/ui/*"]
     }
   },
   "angularCompilerOptions": {

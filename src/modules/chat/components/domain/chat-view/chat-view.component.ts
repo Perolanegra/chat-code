@@ -2,7 +2,7 @@ import { NgForOf } from '@angular/common';
 import { Component, inject, OnInit, OnDestroy, Input } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ChatMessage } from '../../../interfaces/chat-message/chat-message.interface';
-import { FirestoreService } from '../../../../../core/firestore.service';
+import { FirestoreService } from '@core/app/services/firestore.service';
 
 @Component({
   selector: 'app-chat-view',

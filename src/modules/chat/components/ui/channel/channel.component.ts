@@ -1,8 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { CallPanelComponent } from '../../abstract/call-pannel/call-pannel.component';
-import { ChatViewComponent } from '../../abstract/chat-view/chat-view.component';
-
+import { CallPanelComponent, ChatViewComponent } from '@modules-chat-domain/';
 
 @Component({
   selector: 'app-dm',
@@ -31,6 +29,7 @@ import { ChatViewComponent } from '../../abstract/chat-view/chat-view.component'
 export class ChannelComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
 
+  // TODO: Igor
   roomId = 'general';
   pageSize = 50;
 

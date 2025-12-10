@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, inject } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { WebRTCConfig, WebRTCService } from '@core/app/webrtc.service';
-import { WEBRTC_CONFIG } from '@core/app/webrtc.tokens';
+import { WebRTCConfig, WebRTCService } from '@core/app/services/webrtc.service';
+import { WEBRTC_CONFIG } from '@core/app/tokens/webrtc.tokens';
 
 @Component({
   selector: 'app-call-panel',
@@ -66,7 +66,7 @@ export class CallPanelComponent implements OnDestroy {
 
     // Stop local tracks
     if (this.localStream) {
-      this.localStream.getTracks().forEach((t) => t.stop());
+      this.localStream.getTracks().map((t) => t.stop());
       this.localStream = undefined;
     }
 
@@ -84,7 +84,7 @@ export class CallPanelComponent implements OnDestroy {
   ngOnDestroy() {
     this.cleanupSub?.unsubscribe();
     if (this.localStream) {
-      this.localStream.getTracks().forEach((t) => t.stop());
+      this.localStream.getTracks().map((t) => t.stop());
     }
   }
 }

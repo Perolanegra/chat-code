@@ -1,5 +1,5 @@
-
 import { inject, Injectable } from '@angular/core';
+
 import {
   Firestore,
   doc,
@@ -16,22 +16,33 @@ import {
   arrayUnion,
   arrayRemove,
 } from '@angular/fire/firestore';
+import { RoomSeedDTO } from '../dto/room-seed-dto.model';
 
 export interface RoomSeedOptions {
   /**
+
    * Cria uma mensagem de boas-vindas em rooms/{roomId}/messages
+
    */
+
   seedWelcomeMessage?: boolean;
 
   /**
+
    * Define presença inicial dos membros como "online" (rooms/{roomId}/presence/{uid})
+
    */
+
   seedPresenceOnline?: boolean;
 
   /**
+
    * Limpa docs de sinalização WebRTC (offer/answer) e subcoleções candidates
+
    * — Útil para recomeçar testes de chamada.
+
    */
+
   clearWebRTCSignaling?: boolean;
 }
 
@@ -40,56 +51,96 @@ export class RoomSeedService {
   private readonly db = inject(Firestore);
 
   /**
+
    * Cria/atualiza uma sala com name, members e createdAt (no create).
+
    * Opcionalmente: cria mensagem de boas-vindas, presença online e limpa sinalização.
+
+   *
+
+   * Agora recebe um RoomSeedDTO para garantir que todos os campos obrigatórios
+
+   * sejam validados de forma consistente com o sistema de decorators.
+
+   *
+   * As opções de seed (seedWelcomeMessage, seedPresenceOnline, clearWebRTCSignaling)
+   * são lidas diretamente do DTO.
    */
-  async upsertRoom(
-    roomId: string,
-    name: string,
-    members: string[],
-    welcomeSenderId?: string,
-    options: RoomSeedOptions = { seedWelcomeMessage: true, seedPresenceOnline: true, clearWebRTCSignaling: false },
-  ): Promise<void> {
+
+  async upsertRoom(dto: RoomSeedDTO): Promise<void> {
+    const errors = RoomSeedDTO.validate(dto);
+
+    if (errors) {
+      throw new Error('[RoomSeedService] RoomSeedDTO is invalid: ' + JSON.stringify(errors));
+    }
+
+    const {
+      roomId,
+      name,
+      members,
+      welcomeSenderId,
+      seedWelcomeMessage = true,
+      seedPresenceOnline = true,
+      clearWebRTCSignaling = false,
+    } = dto;
+
     const roomRef = doc(this.db, `rooms/${roomId}`);
+
     const snap = await getDoc(roomRef);
 
     if (!snap.exists()) {
       // Create
+
       await setDoc(roomRef, {
         name,
+
         members,
+
         createdAt: serverTimestamp(),
       });
     } else {
       // Update (merge name/members sem sobrescrever createdAt)
+
       await updateDoc(roomRef, {
         name,
+
         members,
       });
     }
 
     // Seed (opcional) de mensagem de boas-vindas
-    if (options.seedWelcomeMessage && welcomeSenderId) {
+
+    if (seedWelcomeMessage && welcomeSenderId) {
       const msgCollection = collection(this.db, `rooms/${roomId}/messages`);
+
       await addDoc(msgCollection, {
         type: 'text',
+
         text: `Welcome to ${name}!`,
+
         senderId: welcomeSenderId,
+
         createdAt: serverTimestamp(),
       });
     }
 
     // Seed (opcional) de presença online
-    if (options.seedPresenceOnline) {
+
+    if (seedPresenceOnline) {
       const promises = members.map(async (uid) => {
         const presenceRef = doc(this.db, `rooms/${roomId}/presence/${uid}`);
-        await setDoc(presenceRef, { status: 'online', updatedAt: serverTimestamp() }, { merge: true });
+        await setDoc(
+          presenceRef,
+          { status: 'online', updatedAt: serverTimestamp() },
+          { merge: true },
+        );
       });
       await Promise.all(promises);
     }
 
     // (Opcional) limpar sinalização de WebRTC
-    if (options.clearWebRTCSignaling) {
+
+    if (clearWebRTCSignaling) {
       await this.clearWebRTC(roomId);
     }
   }

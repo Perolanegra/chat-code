@@ -32,12 +32,12 @@ export interface SendMessageOptions {
 import {
   makeAttachmentMessage,
   makeTextMessage,
-} from '../app/factories/firestore/firestore.factory';
+} from '@core/app/factories/firestore/firestore.factory';
 import {
   ChatMessage,
   ChatMessageAttachment,
   Pagination,
-} from '../modules/chat/interfaces/chat-message/chat-message.interface';
+} from '@modules-chat-interfaces/chat-message/chat-message.interface';
 
 export interface PaginatedMessages {
   messages: ChatMessage[];

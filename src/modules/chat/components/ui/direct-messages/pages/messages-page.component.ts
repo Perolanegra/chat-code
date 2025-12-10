@@ -15,12 +15,12 @@ import { MatIconModule } from '@angular/material/icon';
 import {
   ChatMessage,
   Pagination,
-} from '../../../../interfaces/chat-message/chat-message.interface';
+} from '@modules-chat-interfaces/chat-message/chat-message.interface';
 import {
   FirestoreService,
   PaginatedMessages,
   SendMessageOptions,
-} from '../../../../../../core/firestore.service';
+} from '@core/app/services/firestore.service';
 
 @Component({
   selector: 'app-messages-page',

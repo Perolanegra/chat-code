@@ -6,7 +6,7 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
 import { getStorage, provideStorage } from '@angular/fire/storage';
-import { WEBRTC_CONFIG } from '../core/webrtc.tokens';
+import { WEBRTC_CONFIG } from '@core/app/tokens/webrtc.tokens';
 
 export const appConfig: ApplicationConfig = {
   providers: [
