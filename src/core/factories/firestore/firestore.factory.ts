@@ -1,8 +1,12 @@
-
 import { serverTimestamp, Timestamp } from '@angular/fire/firestore';
-import { ChatMessage } from '../../../modules/chat/interfaces/chat-message/chat-message.interface';
+import { ChatMessage } from '@modules-chat-interfaces/chat-message/chat-message.interface';
 
-export function makeTextMessage(roomId: string, senderId: string, text: string, type: ChatMessage['type']): ChatMessage {
+export function makeTextMessage(
+  roomId: string,
+  senderId: string,
+  text: string,
+  type: ChatMessage['type'],
+): ChatMessage {
   return {
     roomId,
     type,
@@ -13,7 +17,10 @@ export function makeTextMessage(roomId: string, senderId: string, text: string, 
 }
 
 export function makeAttachmentMessage(
-  roomId: string, senderId: string, meta: ChatMessage['attachment'], type: 'image'|'file',
+  roomId: string,
+  senderId: string,
+  meta: ChatMessage['attachment'],
+  type: 'image' | 'file',
 ): ChatMessage {
   return {
     roomId,

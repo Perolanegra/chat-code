@@ -2,6 +2,7 @@ import { Component, inject, INJECTOR, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MainSidebarComponent } from './main-sidebar/main-sidebar';
 import { AuthService } from '@core/app/services/auth/auth.service';
+import { NgIf } from '@angular/common';
 
 declare global {
   interface Window {
@@ -12,7 +13,7 @@ declare global {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MainSidebarComponent],
+  imports: [RouterOutlet, MainSidebarComponent, NgIf],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
