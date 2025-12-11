@@ -32,17 +32,14 @@ export class RoomSeedDTO {
   /**
    * rooms/{roomId}
    */
-  @Required()
   @MinLength(3)
-  @Default('')
   roomId!: string;
 
   /**
    * Room display name
    */
   @Required()
-  @MinLength(1)
-  @Default('')
+  @MinLength(3)
   name!: string;
 
   /**

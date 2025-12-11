@@ -14,7 +14,7 @@ export class RedirectDefaultRoomGuard implements CanActivate {
 
   canActivate(): Observable<UrlTree> {
     return this.svc
-      .getDefaultRoomId()
+      .getRoomId()
       .pipe(map((roomId) => this.router.createUrlTree(['/message-channel', roomId])));
   }
 }

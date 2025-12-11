@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { User, UserCredential } from '@angular/fire/auth';
 import { Observable } from 'rxjs';
 import { EmailPasswordAuthService } from './email-password/email-password-auth.service';
-import { GoogleAuthService } from './google/google-auth.service';
 /**
  * AuthFacadeService
  *
@@ -18,7 +17,6 @@ import { GoogleAuthService } from './google/google-auth.service';
 })
 export class AuthFacadeService {
   private readonly emailSvc = inject(EmailPasswordAuthService);
-  private readonly googleSvc = inject(GoogleAuthService);
 
   /**
    * Emits the current Firebase user (or null) based on email/Google auth.
@@ -41,22 +39,6 @@ export class AuthFacadeService {
 
   sendPasswordResetEmail(email: string): Promise<void> {
     return this.emailSvc.sendResetEmail(email);
-  }
-
-  // ---------------------------------------------------------------------------
-  // Google methods
-  // ---------------------------------------------------------------------------
-
-  signInWithGooglePopup(): Promise<UserCredential> {
-    return this.googleSvc.signInWithPopup();
-  }
-
-  signInWithGoogleRedirect(): Promise<void> {
-    return this.googleSvc.signInWithRedirect();
-  }
-
-  getGoogleRedirectResult(): Promise<UserCredential | null> {
-    return this.googleSvc.getRedirectResult();
   }
 
   // ---------------------------------------------------------------------------

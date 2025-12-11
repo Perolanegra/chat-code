@@ -2,6 +2,8 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthFacadeService } from '@core/app/services/auth/auth-facade.service';
+import { Router } from '@angular/router';
+import { RoomSeedService } from '@core/app/services/room-seed.service';
 
 /**
  * AuthLoginComponent
@@ -14,19 +16,20 @@ import { AuthFacadeService } from '@core/app/services/auth/auth-facade.service';
  * replace the template with your design system components later.
  */
 @Component({
-  selector: 'app-auth-login',
+  selector: 'app-auth',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  templateUrl: './auth.component.html',
+  styleUrls: ['./auth.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthLoginComponent {
+export class AuthComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthFacadeService);
+  private readonly router = inject(Router);
+  private readonly rds = inject(RoomSeedService);
 
   loadingEmail = false;
-  loadingGoogle = false;
   error: string | null = null;
 
   form = this.fb.nonNullable.group({
@@ -34,7 +37,7 @@ export class AuthLoginComponent {
     password: ['', [Validators.required]],
   });
 
-  async onSubmitEmailPassword(): Promise<void> {
+  async signInWithEmail(): Promise<void> {
     if (this.form.invalid || this.loadingEmail) return;
 
     this.error = null;
@@ -52,19 +55,24 @@ export class AuthLoginComponent {
     }
   }
 
-  async onSignInWithGoogle(): Promise<void> {
-    if (this.loadingGoogle) return;
+  async signUpWithEmail(): Promise<void> {
+    if (this.form.invalid || this.loadingEmail) return;
 
     this.error = null;
-    this.loadingGoogle = true;
+
+    const { email, password } = this.form.getRawValue();
 
     try {
-      await this.auth.signInWithGooglePopup();
-      // Optionally navigate after successful login (handled elsewhere).
+      await this.auth.signUpWithEmail(email, password);
+      //TODO: right email/sms validate.
+      //TODO: state que verifica a ultima rota do cara com o objetivo de levar ele pra ela
+      //TODO: essas implementações estarão dentro de handler.controller.ts onde vamos chamar => state('auth') <- onde o auth.facade.service.ts
+      //TODO:  vai consumir algumas implementações desse cara (handler.controller.ts) como middle-man
+      this.router.navigate(['/direct-messages']);
     } catch (e: any) {
       this.error = this.normalizeError(e);
     } finally {
-      this.loadingGoogle = false;
+      this.loadingEmail = false;
     }
   }
 

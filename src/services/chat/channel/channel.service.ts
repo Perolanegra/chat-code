@@ -27,7 +27,7 @@ export class ChannelService {
    * For now this is hardcoded, but you can replace this with a real API
    * call or some stateful logic (e.g. user preferences) later.
    */
-  getDefaultRoomId(): Observable<string> {
+  getRoomId(): Observable<string> {
     // Example: redirect to a "general" room by default
     const defaultRoomId = 'general';
 
